@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAS Augmented Reality</title>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script>
+        AFRAME.registerComponent('soundhandler', {
+            init: function () {
+                this.soundEl = document.querySelector('[sound]');
+                this.marker = document.querySelector('a-marker');
+                this.visible = false;
+            },
+            tick: function () {
+    
+                if (this.marker.object3D.visible && !this.visible) {
+                    console.log("ding")
+                    this.soundEl.components.sound.stopSound(); // stop if playing
+                    this.soundEl.components.sound.playSound(); // play
+                    this.visible = true; // make sure it plays only once per visible
+                } else if (!this.marker.object3D.visible) {
+                    this.visible = false;
+                }
+            }
+        });
+    </script>
+</head>
+
+<body>
+    <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false;';>
+        <a-assets>
+             <audio id="sound" src="./assets/audio/supermario_opening.mp3" preload="auto"></audio>
+         </a-assets>
+         <a-marker preset="custom" type="pattern" url="./pattern/pattern-MARKER.patt">
+            <a-entity gltf-model="./assets/3d/mario_2023_film.glb" scale="0.3 0.3 0.3" position="0.5 0 0"
+                animation="property:rotation; from:0 0 0; to: 0 360 0; dur: 3000; loop:true">
+                <a-sound src="./assets/audio/supermario_opening.mp3" autoplay="true" position="0 0 0"></a-sound>
+            </a-entity>
+        </a-marker>
+         <a-entity sound="src: #sound" autoplay="false"></a-entity>
+         <a-entity camera></a-entity>
+ </a-scene>
+</body>
+</html>
